@@ -1,0 +1,17 @@
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+
+h1{
+    text-align: center;
+}
+div,p,h2{
+    max-width: 40vw;
+    margin: auto;
+    line-height: 1.5;
+    font-family: "JetBrains Mono SemiBold";
+}
+article+article{
+    border-top: 1px solid gray;
+    padding-top:1.5rem;
+    margin-top: 1.5rem;
+}
