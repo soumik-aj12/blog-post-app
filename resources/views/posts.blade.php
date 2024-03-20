@@ -10,7 +10,6 @@
         <?php endforeach;?>
 
 
-
     </div>
 </x-layout>
 

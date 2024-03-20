@@ -23,9 +23,13 @@ class PostController extends Controller
         $new_post = Post::create($data);
         return redirect("/posts/{$new_post->id}");
     }
-    public function getAllPost(Post $post)
+    public function deletePost(Post $post)
     {
-        return view('post',['post'=>$post]);
+        if(auth()->user()->cannot('delete',$post)){
+            return "You cannot do that!";
+        }
+        $post->delete();
+        return redirect('/profile/'.auth()->user()->name)->with('success',"Post Deleted");
     }
     public function getSinglePost(Post $post)
     {

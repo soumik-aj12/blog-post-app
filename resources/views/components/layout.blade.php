@@ -10,6 +10,8 @@
 <nav>
     @auth
         <nav>
+            <a href="/manage-avatar"><img src="" alt="{{auth()->user()->name}}'s Avatar"></a>
+            <a href="/profile/{{auth()->user()->name}}">View Profile</a>
             <button type="submit"><a href="/create-post">Create Post</a></button>
             <form action="/logout" method="post">
                 @csrf

@@ -2,6 +2,7 @@
 
 use App\Models\Post;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use \App\Http\Controllers\UsersController;
@@ -75,6 +76,10 @@ Route::get('/henlo',function () {
     return view('henlo',['henlo'=>$data]);
 });
 
+Route::get('/admin-pages',function (){
+    return "Welcome Admin";
+})->middleware('can:verifyAdmin');
+
 //Route::get('/users',fn()=> view('form'));
 Route::post('/users',[UsersController::class,'login'])->middleware('guest');
 Route::view('/login',"form")->name('login');
@@ -85,3 +90,8 @@ Route::post('/logout',[UsersController::class,'logout']);
 Route::get('/create-post',[PostController::class,'createPostPage'])->middleware('isLoggedIn');
 Route::post('/create-post',[PostController::class,'addPost'])->middleware('isLoggedIn');
 Route::get('/posts/{post}',[PostController::class,'getSinglePost'])->middleware('isLoggedIn');
+Route::delete('/posts/{post}',[PostController::class,'deletePost']);
+
+Route::get('/profile/{user:name}',[UsersController::class,'profile'])->middleware('isLoggedIn')->middleware('isLoggedIn');
+Route::get('/manage-avatar',[UsersController::class,'showAvatarForm']);
+Route::post('/manage-avatar',[UsersController::class,'manageAvatar']);

@@ -38,4 +38,19 @@ class UsersController extends Controller
         auth()->logout();
         return redirect('/login')->with('success','You are logged out!');
     }
+    public function profile(User $user)
+    {
+        $posts =  $user->getPostsByUser()->get();
+//        return $user->toJson();
+        return view('profile',['name'=>$user->name,'posts'=>$posts,'postCount'=>$posts->count()]);
+    }
+    public function showAvatarForm()
+    {
+        return view('avatar');
+    }
+    public function manageAvatar(Request $req)
+    {
+        $req->file('avatar')->store('public/Avatars');
+        return redirect('/profile/'.auth()->user()->name);
+    }
 }
