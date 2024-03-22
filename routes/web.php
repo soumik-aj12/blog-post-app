@@ -80,12 +80,12 @@ Route::get('/admin-pages',function (){
     return "Welcome Admin";
 })->middleware('can:verifyAdmin');
 
-//Route::get('/users',fn()=> view('form'));
+Route::get('/profile',[UsersController::class,'viewProfile']);
 Route::post('/users',[UsersController::class,'login'])->middleware('guest');
 Route::view('/login',"form")->name('login');
 Route::view('/register',"register");
 Route::post('/register',[UsersController::class,'register']);
-Route::post('/logout',[UsersController::class,'logout']);
+Route::post('/logout',[UsersController::class,'logout'])->middleware('isLoggedIn');
 
 Route::get('/create-post',[PostController::class,'createPostPage'])->middleware('isLoggedIn');
 Route::post('/create-post',[PostController::class,'addPost'])->middleware('isLoggedIn');
@@ -93,5 +93,9 @@ Route::get('/posts/{post}',[PostController::class,'getSinglePost'])->middleware(
 Route::delete('/posts/{post}',[PostController::class,'deletePost']);
 
 Route::get('/profile/{user:name}',[UsersController::class,'profile'])->middleware('isLoggedIn')->middleware('isLoggedIn');
-Route::get('/manage-avatar',[UsersController::class,'showAvatarForm']);
-Route::post('/manage-avatar',[UsersController::class,'manageAvatar']);
+Route::get('/manage-avatar',[UsersController::class,'showAvatarForm'])->middleware('isLoggedIn');
+Route::post('/manage-avatar',[UsersController::class,'manageAvatar'])->middleware('isLoggedIn');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
     //
+    public  function viewProfile()
+    {
+        return view('home');
+    }
     public function register(Request $req)
     {
         $data = $req->validate(
@@ -28,7 +34,7 @@ class UsersController extends Controller
             'loginpassword'=>'required']
         );
         if(auth()->attempt(['email'=>$data['loginemail'],'password'=>$data['loginpassword']])){
-            return redirect('/login')->with('success','You are logged in!');
+            return redirect('/profile/'.auth()->user()->name)->with('success','You are logged in!');
         }else{
             return 'login failed';
         }
@@ -42,7 +48,7 @@ class UsersController extends Controller
     {
         $posts =  $user->getPostsByUser()->get();
 //        return $user->toJson();
-        return view('profile',['name'=>$user->name,'posts'=>$posts,'postCount'=>$posts->count()]);
+        return view('profile',['name'=>$user->name,'posts'=>$posts,'avatar'=> $user->avatar, 'postCount'=>$posts->count()]);
     }
     public function showAvatarForm()
     {
@@ -50,7 +56,19 @@ class UsersController extends Controller
     }
     public function manageAvatar(Request $req)
     {
-        $req->file('avatar')->store('public/Avatars');
-        return redirect('/profile/'.auth()->user()->name);
+        $user = auth()->user();
+        $req->validate([
+            'avatar'=>'required|image|max:3000'
+        ]);
+        $img = Image::make($req->file('avatar'))->fit(120)->encode('jpg');
+        $filename = $user->id . '-' . uniqid(). '.jpg';
+        Storage::put('public/Avatars/'.$filename,$img);
+        $old_img = $user->avatar;
+        $user->avatar = $filename;
+        $user->save();
+        if($old_img!='/default-image.jpg'){
+            Storage::delete(str_replace("/storage/","public/",$old_img));
+        }
+        return redirect('/profile/'.auth()->user()->name)->with("success","Congratulations on your new avatar!");
     }
 }
