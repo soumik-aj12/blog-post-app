@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FollowController;
 use App\Models\Post;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
@@ -82,7 +83,7 @@ Route::get('/admin-pages',function (){
 
 Route::get('/profile',[UsersController::class,'viewProfile']);
 Route::post('/users',[UsersController::class,'login'])->middleware('guest');
-Route::view('/login',"form")->name('login');
+Route::view('/login',"login")->name('login');
 Route::view('/register',"register");
 Route::post('/register',[UsersController::class,'register']);
 Route::post('/logout',[UsersController::class,'logout'])->middleware('isLoggedIn');
@@ -96,6 +97,8 @@ Route::get('/profile/{user:name}',[UsersController::class,'profile'])->middlewar
 Route::get('/manage-avatar',[UsersController::class,'showAvatarForm'])->middleware('isLoggedIn');
 Route::post('/manage-avatar',[UsersController::class,'manageAvatar'])->middleware('isLoggedIn');
 
-Auth::routes();
+Route::post('/create-follow/{user:name}',[FollowController::class,'createFollow'])->middleware('isLoggedIn');
+Route::post('/remove-follow/{user:name}',[FollowController::class,'removeFollow'])->middleware('isLoggedIn');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/profile/{user:name}/followers',[UsersController::class,'profileFollowers']);
+Route::get('/profile/{user:name}/following',[UsersController::class,'profileFollowing']);

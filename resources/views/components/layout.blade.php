@@ -34,34 +34,30 @@
                 </ul>
 
                 <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto m-2">
                     <!-- Authentication Links -->
                     @guest
-                        @if (Route::has('login'))
                             <li class="nav-item">
-                                <a class="nav-link" href="/login">Login</a>
+                                <a class="nav-link" href="/login" class="btn btn-primary">Login</a>
                             </li>
-                        @endif
 
-                        @if (Route::has('register'))
                             <li class="nav-item">
-                                <a class="nav-link" href="/register">Register</a>
+                                <a class="nav-link" href="/register" class="btn btn-dark">Register</a>
                             </li>
-                        @endif
                     @else
                         <li class="nav-item dropdown">
                             <a href="/manage-avatar"><img src="{{auth()->user()->avatar}}" alt="{{auth()->user()->name}}'s Avatar" style="width: 32px;height: 32px;border-radius: 16px"></a>
                         </li>
                         <li>
-                            <a href="/profile/{{auth()->user()->name}}">View Profile</a>
+                            <a href="/profile/{{auth()->user()->name}}" class="btn btn-primary mx-2">View Profile</a>
                         </li>
                         <li>
-                            <button type="submit"><a href="/create-post">Create Post</a></button>
+                            <a href="/create-post" class="btn btn-primary mx-2">Create Post</a>
                         </li>
                         <li>
                             <form action="/logout" method="post" id="logout-form">
                                 @csrf
-                                <button class="text-bg-light bg-danger">Logout</button>
+                                <button class="btn btn-danger mx-2">Logout</button>
                             </form>
                         </li>
                     @endguest
@@ -71,9 +67,20 @@
     </nav>
 
     <main class="py-4">
-        @if(session()->has('failureLogin'))
-            <div style="background-color: rgb(255,107,107);color:red">{{session('failureLogin')}}</div>
-        @endif
+            @if (session()->has('success'))
+                <div class="container container--narrow">
+                    <div class="alert alert-success text-center">
+                        {{session('success')}}
+                    </div>
+                </div>
+            @endif
+            @if (session()->has('failure'))
+                <div class="container container--narrow">
+                    <div class="alert alert-danger text-center">
+                        {{session('failure')}}
+                    </div>
+                </div>
+            @endif
         {{$slot}}
     </main>
 </div>
