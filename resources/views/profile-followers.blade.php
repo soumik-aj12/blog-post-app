@@ -1,9 +1,8 @@
-<x-profile :avatar="$avatar" :postCount="$postCount" :currentlyFollowing="$currentlyFollowing" :name="$name">
-    <div class="card">
-        <div class="card-body">
-            @foreach($posts as $post)
-                <p><img src="{{$post->getUser->avatar}}" alt="{{$post->getUser->name}}'s Avatar" style="width: 32px;height: 32px;border-radius: 16px"><a href="/posts/{{$post->id}}">{{$post->title}}</a> - {{$post->created_at->format('n/j/Y')}}</p>
-            @endforeach
-        </div>
+<x-profile :sharedData="$sharedData">
+    <div class="list-group">
+        @foreach($followers as $follower)
+        <p><img src="{{$follower->userFollowingSomeone->avatar}}" alt="{{$follower->userFollowingSomeone->name}}'s Avatar"
+                style="width: 32px;height: 32px;border-radius: 16px"><a href="/profile/{{$follower->userFollowingSomeone->name}}">{{$follower->userFollowingSomeone->name}}</a>
+        @endforeach
     </div>
 </x-profile>

@@ -100,5 +100,5 @@ Route::post('/manage-avatar',[UsersController::class,'manageAvatar'])->middlewar
 Route::post('/create-follow/{user:name}',[FollowController::class,'createFollow'])->middleware('isLoggedIn');
 Route::post('/remove-follow/{user:name}',[FollowController::class,'removeFollow'])->middleware('isLoggedIn');
 
-Route::get('/profile/{user:name}/followers',[UsersController::class,'profileFollowers']);
-Route::get('/profile/{user:name}/following',[UsersController::class,'profileFollowing']);
+Route::get('/profile/{user:name}/followers',[UsersController::class,'profileFollowers'])->middleware('isLoggedIn');
+Route::get('/profile/{user:name}/following',[UsersController::class,'profileFollowing'])->middleware('isLoggedIn');

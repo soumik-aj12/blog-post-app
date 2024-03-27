@@ -6,6 +6,7 @@ use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
 
@@ -41,15 +42,36 @@ class UsersController extends Controller
         auth()->logout();
         return redirect('/login')->with('success','You are logged out!');
     }
-    public function profile(User $user)
-    {
-        $posts =  $user->getPostsByUser()->get();
 
+    private function getSharedData($user){
         $currentlyFollowing = 0;
         if(auth()->check()) $currentlyFollowing = Follow::where([['user_id','=',auth()->user()->id],['followeduser','=',$user->id]])->count();
-//        return $user->toJson();
-        return view('profile-posts',['name'=>$user->name,'posts'=>$posts,'avatar'=> $user->avatar, 'currentlyFollowing' => $currentlyFollowing,'postCount'=>$posts->count()]);
+
+        View::share('sharedData',['name'=>$user->name,'avatar'=> $user->avatar, 'currentlyFollowing' => $currentlyFollowing,'postCount'=>$user->posts()->count(),'followerCount'=>$user->followers()->count(),'followingCount'=>$user->following()->count()]);
     }
+
+    public function profile(User $user)
+    {
+        $this->getSharedData($user);
+//        return $user->toJson();
+        return view('profile-posts',['posts'=>$user->posts()->latest()->get(),'postCount'=>$user->posts()->count()]);
+    }
+    public function profileFollowers(User $user)
+    {
+        $this->getSharedData($user);
+        // return ['followers'=>$user->followers()->latest()->get(), 'posts'=>$user->posts()->latest()->get(),'postCount'=>$user->posts()->count()];
+        
+        return view('profile-followers',['followers'=>$user->followers()->latest()->get(), 'posts'=>$user->posts()->latest()->get(),'postCount'=>$user->posts()->count()]);
+
+    }
+    public function profileFollowing(User $user)
+    {
+        $this->getSharedData($user);
+
+        return view('profile-following',['followers'=>$user->following()->latest()->get(),'postCount'=>$user->posts()->count()]);
+
+    }
+
     public function showAvatarForm()
     {
         return view('avatar');
@@ -71,25 +93,6 @@ class UsersController extends Controller
         }
         return redirect('/profile/'.auth()->user()->name)->with("success","Congratulations on your new avatar!");
     }
-    public function profileFollowers(User $user)
-    {
-        $posts =  $user->getPostsByUser()->get();
-
-        $currentlyFollowing = 0;
-        if(auth()->check()) $currentlyFollowing = Follow::where([['user_id','=',auth()->user()->id],['followeduser','=',$user->id]])->count();
-//        return $user->toJson();
-        return view('profile-followers',['name'=>$user->name,'posts'=>$posts,'avatar'=> $user->avatar, 'currentlyFollowing' => $currentlyFollowing,'postCount'=>$posts->count()]);
-
-    }
-    public function profileFollowing(User $user)
-    {
-        $posts =  $user->getPostsByUser()->get();
-
-        $currentlyFollowing = 0;
-        if(auth()->check()) $currentlyFollowing = Follow::where([['user_id','=',auth()->user()->id],['followeduser','=',$user->id]])->count();
-//        return $user->toJson();
-        return view('profile-following',['name'=>$user->name,'posts'=>$posts,'avatar'=> $user->avatar, 'currentlyFollowing' => $currentlyFollowing,'postCount'=>$posts->count()]);
-
-    }
+    
 }
 
